@@ -20,12 +20,12 @@ if option == "Home":
     image_folder = "image"  # Folder path
     image_files = os.listdir(image_folder)  # List all files in the folder
 
-    cols = st.columns(2)  # Create 3 columns for displaying images
+    cols = st.columns(3)  # Create 3 columns for displaying images
     for index, image_file in enumerate(image_files):
         if image_file.lower().endswith(('jpg', 'jpeg', 'png')):  # Filter images by extension
             image_path = os.path.join(image_folder, image_file)
             image = Image.open(image_path)
-            cols[index % 2].image(image, caption=image_file, use_column_width=True)
+            cols[index % 3].image(image, caption=image_file, use_column_width=True)
 
 # Sign Up Page
 elif option == "Sign Up":
