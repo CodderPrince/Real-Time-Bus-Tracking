@@ -42,11 +42,11 @@ elif option == "Bus Schedule":
     st.subheader("Check the bus schedule and routes below.")
 
     schedule = {
-        "Route 1": "University -> Tajhat -> Shapla Chattar -> Varisty",
-        "Route 2": "University -> Satmatha -> Pressclub -> Varisty",
-        "Route 3": "University -> Nisbetganj -> Shapla Chattar -> Varisty",
-        "Route 4": "University -> Medical Mor -> T.T.College -> Varisty",
-        "Route 5": "University -> Medical Mor -> Hazir Hat -> Varisty"
+        "Route 1": "University -> Tajhat -> Shapla Chattar -> University",
+        "Route 2": "University -> Satmatha -> Pressclub -> University",
+        "Route 3": "University -> Nisbetganj -> Shapla Chattar -> University",
+        "Route 4": "University -> Medical Mor -> T.T.College -> University",
+        "Route 5": "University -> Medical Mor -> Hazir Hat -> University"
     }
     for route, time in schedule.items():
         st.write(f"**{route}**: {time}")
