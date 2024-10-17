@@ -2,32 +2,45 @@ import streamlit as st
 from PIL import Image
 import os
 
-# App title
-st.set_page_config(page_title="Real-Time Bus Tracking", layout="wide")  # Optional: Wide layout for better UI
+# App title and layout
+st.set_page_config(page_title="Real-Time Bus Tracking", layout="wide")
 
-# Sidebar with multiple options
-option = st.sidebar.selectbox(
+# Sidebar with radio buttons to navigate between pages
+option = st.sidebar.radio(
     "Choose a Page",
     ["Home", "Sign Up", "Bus Schedule", "Map Location", "Journey"]
 )
 
-# Home Page: Display default images from 'image' folder
+# ===========================
+# Home Page: Display images from 'image' folder
+# ===========================
 if option == "Home":
     st.title("Welcome to Your Real-Time Bus Tracking")
     st.subheader("Explore Our Services and Track Your Bus Effortlessly!")
 
-    # Display images from the 'image' folder
-    image_folder = "image"  # Folder path
-    image_files = os.listdir(image_folder)  # List all files in the folder
+    # Custom order of images for the Home page
+    home_image_order = [
+        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg"
+    ]
 
-    cols = st.columns(3)  # Create 3 columns for displaying images
-    for index, image_file in enumerate(image_files):
-        if image_file.lower().endswith(('jpg', 'jpeg', 'png')):  # Filter images by extension
-            image_path = os.path.join(image_folder, image_file)
+    # Folder path where home images are stored
+    image_folder = "image"
+
+    # Display home images in the specified order
+    cols = st.columns(3)  # Create 3 columns
+    for index, image_file in enumerate(home_image_order):
+        image_path = os.path.join(image_folder, image_file)
+
+        # Check if the file exists to avoid errors
+        if os.path.isfile(image_path):
             image = Image.open(image_path)
             cols[index % 3].image(image, caption=image_file, use_column_width=True)
+        else:
+            st.warning(f"Image '{image_file}' not found in the 'image' folder.")
 
+# ===========================
 # Sign Up Page
+# ===========================
 elif option == "Sign Up":
     st.header("Sign Up")
     name = st.text_input("Enter your name")
@@ -36,11 +49,14 @@ elif option == "Sign Up":
     if st.button("Submit"):
         st.success(f"Welcome, {name}! Your account has been created.")
 
+# ===========================
 # Bus Schedule Page: Display images from 'bus schedule' folder
+# ===========================
 elif option == "Bus Schedule":
     st.header("Bus Schedule")
     st.subheader("Check the bus schedule and routes below.")
 
+    # Display route details
     schedule = {
         "Route 1": "University -> Tajhat -> Shapla Chattar -> University",
         "Route 2": "University -> Satmatha -> Pressclub -> University",
@@ -51,21 +67,32 @@ elif option == "Bus Schedule":
     for route, time in schedule.items():
         st.write(f"**{route}**: {time}")
 
-    # Display images from 'bus schedule' folder
+    # Custom order of images for Bus Schedule
+    schedule_image_order = [
+        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg"
+    ]
+
+    # Folder path for bus schedule images
     schedule_folder = "bus schedule"
-    schedule_files = os.listdir(schedule_folder)
 
-    cols = st.columns(2)  # Create 3 columns for the images
-    for index, schedule_file in enumerate(schedule_files):
-        if schedule_file.lower().endswith(('jpg', 'jpeg', 'png')):
-            schedule_path = os.path.join(schedule_folder, schedule_file)
-            schedule_image = Image.open(schedule_path)
-            cols[index % 2].image(schedule_image, caption=schedule_file, use_column_width=True)
+    # Display bus schedule images in the specified order
+    cols = st.columns(2)  # Create 2 columns
+    for index, image_file in enumerate(schedule_image_order):
+        image_path = os.path.join(schedule_folder, image_file)
 
-# Map Location Page (Embedding Google Maps)
+        # Check if the file exists to avoid errors
+        if os.path.isfile(image_path):
+            image = Image.open(image_path)
+            cols[index % 2].image(image, caption=image_file, use_column_width=True)
+        else:
+            st.warning(f"Image '{image_file}' not found in the 'bus schedule' folder.")
+
+# ===========================
+# Map Location Page (Google Maps embed)
+# ===========================
 elif option == "Map Location":
     st.header("Map Location")
-    
+
     # Embed Google Maps iframe
     st.markdown(
         """
@@ -81,21 +108,22 @@ elif option == "Map Location":
         unsafe_allow_html=True
     )
 
+# ===========================
 # Journey Page: Select journey locations and show available buses
+# ===========================
 elif option == "Journey":
     st.header("Plan Your Journey")
     st.subheader("Select Your Journey Location")
 
-    # Dictionary of routes with their stoppages
+    # Define routes and available buses
     routes = {
         "Route 1": ["University", "Tajhat", "Shapla Chattar", "Bikon Mor", "Khamar Mor", "Lalbag", "University"],
         "Route 2": ["University", "Satmatha", "Tajhat", "Pressclub", "University"],
-        "Route 3": ["University", "Nisbetganj", "Shapla Chattar", "Shapla Chattar", "Bikon Mor", "Khamar Mor", "Lalbag", "University"],
+        "Route 3": ["University", "Nisbetganj", "Shapla Chattar", "Bikon Mor", "Khamar Mor", "Lalbag", "University"],
         "Route 4": ["University", "Medical Mor", "T.T.College", "University"],
         "Route 5": ["University", "Medical Mor", "Hazir Hat", "University"]
     }
 
-    # Dictionary of bus names for each route
     bus_name = {
         "Route 1": ["Shamasundari", "Jaleswari", "Padmaraga"],
         "Route 2": ["Teesta", "Shatranji", "Charyapad"],
@@ -116,18 +144,16 @@ elif option == "Journey":
          "Pressclub", "Satmatha", "Hazir Hat", "T.T.College", "Medical Mor"]
     )
 
-    # Button to show available buses
+    # Show available buses on button click
     if st.button("Available Bus"):
         if from_stoppage == to_stoppage:
             st.warning("Please select different stoppages.")
         else:
-            # Find routes where both stoppages are present
-            matching_routes = []
-            for route, stops in routes.items():
-                if from_stoppage in stops and to_stoppage in stops:
-                    matching_routes.append(route)
+            matching_routes = [
+                route for route, stops in routes.items()
+                if from_stoppage in stops and to_stoppage in stops
+            ]
 
-            # Display matching routes and their available bus names
             if matching_routes:
                 st.success(f"Available buses from {from_stoppage} to {to_stoppage}:")
                 for route in matching_routes:
